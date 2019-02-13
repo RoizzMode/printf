@@ -6,22 +6,34 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/07 14:25:23 by lschambe          #+#    #+#             */
-/*   Updated: 2019/02/08 18:18:53 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/02/11 17:36:33 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void	print_numb(t_spec *spec, int num)
+int	print_numb(t_spec *spec, int num)
 {
-	(void)spec;
+	char *s;
+	//char *str;
+	int len;
+	s = ft_itoa(num);
+	if (spec->widt > (int)ft_strlen(s))
+		len = spec->widt;
+	else
+		len = ft_strlen(s);
+	if (spec->prec > len)
+		len = spec->prec;
+
 	ft_putnbr(num);
+	return (len);
 }
 
-void	print_char(t_spec *spec, char c)
+int	print_char(t_spec *spec, char c)
 {
 	char *s;
 	int i;
+	int len;
 
 	i = 0;
 	if (spec->widt)
@@ -34,13 +46,16 @@ void	print_char(t_spec *spec, char c)
 		else
 			s[0] = c;
 		ft_putstr(s);
+		len = ft_strlen(s);
 		free(s);
+		return (len);
 	}
 	else
 		ft_putchar(c);
+	return (1);
 }
 
-void	print_string(t_spec *spec, char *s)
+int	print_string(t_spec *spec, char *s)
 {
 	char *str;
 	int i;
@@ -52,6 +67,8 @@ void	print_string(t_spec *spec, char *s)
 		len = spec->prec;
 	else
 		len = (int)ft_strlen(s);
+	//ft_putnbr(len);
+	//ft_putchar('\n');
 	if (spec->widt > len)
 	{
 		str = ft_strnew(spec->widt);
@@ -68,14 +85,17 @@ void	print_string(t_spec *spec, char *s)
 				str[k] = s[i];
 		}
 		ft_putstr(str);
+		free(str);
 	}
 	else
 		while (i < len)
 			write(1, &s[i++], 1);
+	return (len);
 }
 
-void	print_point(t_spec *spec, char *p)
+int	print_point(t_spec *spec, char *p)
 {
 	(void)spec;
 	ft_putnbr((int)p);
+	return (1);
 }

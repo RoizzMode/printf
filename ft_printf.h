@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 16:43:36 by lschambe          #+#    #+#             */
-/*   Updated: 2019/02/07 16:15:29 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/02/11 14:52:05 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ typedef struct s_spec
 	char type;
 }				t_spec;
 
-void	ft_printf(const char *format, ...);
+int	ft_printf(const char *format, ...);
 void	initialize(t_spec *spec);
 int	parse_spec(t_spec *spec, char *s);
-void	print_numb(t_spec *spec, int num);
-void	print_char(t_spec *spec, char c);
-void	print_string(t_spec *spec, char *s);
-void	print_point(t_spec *spec, char *p);
+int	print_numb(t_spec *spec, int num);
+int	print_char(t_spec *spec, char c);
+int	print_string(t_spec *spec, char *s);
+int	print_point(t_spec *spec, char *p);

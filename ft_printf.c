@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 13:58:28 by lschambe          #+#    #+#             */
-/*   Updated: 2019/02/08 18:23:38 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/02/13 14:10:03 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,47 +30,58 @@ int	parse_spec(t_spec *spec, char *s)
 	int i;
 
 	i = 0;
-	while (!(s[i] == '\0' || s[i] == ' ') && spec->type == 0)
+	while (spec->type == 0)
 	{
-		if (s[i] == '-')
+		if (s[i] == '-' && !(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
 			spec->minu = 1;
-		if (s[i] == '+')
+		else if(s[i] == '+' && !(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
 			spec->plu = 1;
-		if (s[i] == ' ')
+		else if (s[i] == ' ' && !(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
 			spec->spac = 1;
-		if (s[i] == '#')
+		else if (s[i] == '#' && !(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
 			spec->octo = 1;
-		if (s[i] == '0' && !((s[i - 1] >= '0' && s[i - 1] <= '9') || s[i - 1] == '.'))
+		else if (s[i] == '0' && !((s[i - 1] >= '0' && s[i - 1] <= '9') || s[i - 1] == '.')
+				&& !(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
 			spec->zero = 1;
-		if (s[i] >= '1' && s[i] <= '9')
+		else if (s[i] >= '1' && s[i] <= '9' && !(spec->widt) && (spec->prec < 0)
+				&& !(spec->size) && !(spec->type))
 		{
 			spec->widt = ft_atoi(s + i);
-			i += num_len(spec->widt);
+			i =i + num_len(spec->widt) - 1;
 		}
-		if (s[i] == '.')
+		//else if (s[i] == '.' && (spec->prec < 0) && !(spec->size) && !(spec->type))
+		else if (s[i] == '.')
 		{
 			spec->prec = ft_atoi(s + i + 1);
-			i += num_len(spec->prec) + 1;
+			i += num_len(spec->prec);
 		}
-		if (s[i] == 'c' || s[i] == 'd' || s[i] == 'f' || s[i] == 'o'|| s[i] == 'u'||
-				s[i] == 'x'|| s[i] == 'X'|| s[i] == 's'|| s[i] == 'p'|| s[i] == 'i'
-				|| (s[i] == '%' && i != 0))
-			spec->type = s[i];
-		if (s[i] == 'l' && s[i + 1] == 'l')
+		//if (s[i] == 'c' || s[i] == 'd' || s[i] == 'f' || s[i] == 'o'|| s[i] == 'u'||
+		//		s[i] == 'x'|| s[i] == 'X'|| s[i] == 's'|| s[i] == 'p'|| s[i] == 'i'
+		//		|| (s[i] == '%' && i != 0))
+		//	spec->type = s[i];
+		else if (s[i] == 'l' && s[i + 1] == 'l' && !(spec->widt) &&
+				(spec->prec < 0) && !(spec->size) && !(spec->type))
 		{
 			spec->size = 'b';
 			i += 2;
 			continue;
 		}
-		if (s[i] == 'h' && s[i + 1] == 'h')
+		else if (s[i] == 'h' && s[i + 1] == 'h' && !(spec->widt) &&
+				(spec->prec < 0) && !(spec->size) && !(spec->type))
 		{
 			spec->size = 's';
 			i += 2;
 			continue;
 		}
-		if (s[i] == 'h' || s[i] == 'l' || s[i] == 'L')
+		else if ((s[i] == 'h' || s[i] == 'l' || s[i] == 'L') &&
+				!(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
 			spec->size = s[i];
+		else if (s[i] >= 0 && s[i] <= 127 && i > 0)
+		{
+			spec->type = s[i];
+		}
 		i++;
+		//printf("%c ", s[i]);
 	}
 	return (i);
 }
@@ -110,57 +121,55 @@ void	initialize(t_spec *spec)
 	spec->size = 0;
 	spec->type = 0;
 }
-/*void	ft_printf(const char *format, ...)
-{
-	va_list ap;
-	char *s;
-//	int a;
 
-	s = (char*)format;
-	va_start(ap, format);
-	//a = va_arg(ap, int);
-	//printf("%d", a);
-
-	va_end(ap);
-}*/
-
-void	ft_printf(const char *format, ...)
+int	ft_printf(const char *format, ...)
 {
 	int i;
 	t_spec *spec;
 	va_list ap;
+	int k;
 
 	va_start(ap, format);
 	i = 0;
+	k = 0;
 	spec = (t_spec *)malloc(sizeof(t_spec));
 	while (format[i] != '\0')
 	{
 		if (format[i] == '%')
 		{
 			initialize(spec);
-			i += parse_spec(spec, (char *)(format));
+			i += parse_spec(spec, (char *)(format + i));
 			//print_spec(spec);
 			if (spec->type == 'd' || spec->type == 'i' || spec->type == 'o'
 					|| spec->type == 'u' ||spec->type == 'x' ||spec->type == 'X')
-				print_numb(spec, va_arg(ap, int));
-			if (spec->type == 'c')
-				print_char(spec, va_arg(ap, int));
-			if (spec->type == 's')
-				print_string(spec, va_arg(ap, char*));
-			if (spec->type == 'p')
-				print_point(spec, va_arg(ap, char*));
+				k += print_numb(spec, va_arg(ap, int));
+			else if (spec->type == 'c')
+				k += print_char(spec, va_arg(ap, int));
+			else if (spec->type == 's')
+			{
+				k += print_string(spec, va_arg(ap, char*));
+			}
+			else if (spec->type == 'p')
+				k += print_point(spec, va_arg(ap, char*));
+			else
+				k += print_char(spec, spec->type);
 		}
 		else
+		{
 			ft_putchar(format[i++]);
+			k++;
+		}
 	}
 	va_end(ap);
+	return (k);
 }
 
-int main()
+/*int main()
 {
-	printf("%-5.6s", "\0w");
-	printf("\n");
-	ft_printf("%-5.6s", "\0w");
+	char *s = "qwe";
+	//printf("% 132.20", s);
+	//printf("\n");
+	ft_printf("% 132.20", s);
 	//printf("%d", num_len(123));
 	return (0);
-}
+}*/
