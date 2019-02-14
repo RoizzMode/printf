@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 13:58:28 by lschambe          #+#    #+#             */
-/*   Updated: 2019/02/13 14:10:03 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/02/14 18:03:35 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	parse_spec(t_spec *spec, char *s)
 	int i;
 
 	i = 0;
-	while (spec->type == 0)
+	while (spec->type == 0 && s[i] != '\0')
 	{
 		if (s[i] == '-' && !(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
 			spec->minu = 1;
@@ -59,22 +59,19 @@ int	parse_spec(t_spec *spec, char *s)
 		//		s[i] == 'x'|| s[i] == 'X'|| s[i] == 's'|| s[i] == 'p'|| s[i] == 'i'
 		//		|| (s[i] == '%' && i != 0))
 		//	spec->type = s[i];
-		else if (s[i] == 'l' && s[i + 1] == 'l' && !(spec->widt) &&
-				(spec->prec < 0) && !(spec->size) && !(spec->type))
+		else if (s[i] == 'l' && s[i + 1] == 'l' && !(spec->size) && !(spec->type))
 		{
 			spec->size = 'b';
 			i += 2;
 			continue;
 		}
-		else if (s[i] == 'h' && s[i + 1] == 'h' && !(spec->widt) &&
-				(spec->prec < 0) && !(spec->size) && !(spec->type))
+		else if (s[i] == 'h' && s[i + 1] == 'h' && !(spec->size) && !(spec->type))
 		{
 			spec->size = 's';
 			i += 2;
 			continue;
 		}
-		else if ((s[i] == 'h' || s[i] == 'l' || s[i] == 'L') &&
-				!(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
+		else if ((s[i] == 'h' || s[i] == 'l' || s[i] == 'L') && !(spec->size) && !(spec->type))
 			spec->size = s[i];
 		else if (s[i] >= 0 && s[i] <= 127 && i > 0)
 		{
@@ -83,6 +80,8 @@ int	parse_spec(t_spec *spec, char *s)
 		i++;
 		//printf("%c ", s[i]);
 	}
+	if (!spec->type)
+		return (0);
 	return (i);
 }
 
@@ -128,21 +127,24 @@ int	ft_printf(const char *format, ...)
 	t_spec *spec;
 	va_list ap;
 	int k;
+	int parsed;
 
 	va_start(ap, format);
 	i = 0;
 	k = 0;
 	spec = (t_spec *)malloc(sizeof(t_spec));
+	initialize(spec);
 	while (format[i] != '\0')
 	{
-		if (format[i] == '%')
+		if (format[i] == '%' && (parsed = parse_spec(spec, (char *)(format + i))))
 		{
-			initialize(spec);
-			i += parse_spec(spec, (char *)(format + i));
+			i += parsed;
 			//print_spec(spec);
-			if (spec->type == 'd' || spec->type == 'i' || spec->type == 'o'
-					|| spec->type == 'u' ||spec->type == 'x' ||spec->type == 'X')
-				k += print_numb(spec, va_arg(ap, int));
+			if (spec->type == 'd' || spec->type == 'i')
+				k += print_signed_numb(spec, va_arg(ap,long long int));
+			else if (spec->type == 'o' || spec->type == 'u' || spec->type == 'x'
+					|| spec->type == 'X')
+				k += print_unsigned_numb(spec, va_arg(ap, unsigned long long int));
 			else if (spec->type == 'c')
 				k += print_char(spec, va_arg(ap, int));
 			else if (spec->type == 's')
@@ -153,6 +155,7 @@ int	ft_printf(const char *format, ...)
 				k += print_point(spec, va_arg(ap, char*));
 			else
 				k += print_char(spec, spec->type);
+			initialize(spec);
 		}
 		else
 		{
@@ -164,12 +167,19 @@ int	ft_printf(const char *format, ...)
 	return (k);
 }
 
-/*int main()
+int main()
 {
-	char *s = "qwe";
-	//printf("% 132.20", s);
-	//printf("\n");
-	ft_printf("% 132.20", s);
-	//printf("%d", num_len(123));
+//	unsigned long long int ull = 9223372036854775807; //9223372036854775807;
+//	unsigned long int ul = 4294967295; //4294967295
+//	unsigned short int us = 65535; //65535
+//	unsigned char uc = 255; //255
+//	printf("%#llo\n", ull);
+//	ft_printf("%#llo\n", ull);
+//	printf("%#lo\n", ul);
+//	ft_printf("%#lo\n", ul);
+//	printf("%#ho\n", us);
+//	ft_printf("%#ho\n", us);
+	printf("Unix: %#16X\n", 12345678);
+	ft_printf("My  : %#16X\n", 12345678);
 	return (0);
-}*/
+}
