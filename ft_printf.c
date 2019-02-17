@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 13:58:28 by lschambe          #+#    #+#             */
-/*   Updated: 2019/02/14 18:03:35 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/02/17 15:26:36 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	parse_spec(t_spec *spec, char *s)
 			spec->spac = 1;
 		else if (s[i] == '#' && !(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
 			spec->octo = 1;
-		else if (s[i] == '0' && !((s[i - 1] >= '0' && s[i - 1] <= '9') || s[i - 1] == '.')
+		else if (s[i] == '0' /*&& !((s[i - 1] >= '0' && s[i - 1] <= '9') || s[i - 1] == '.')*/
 				&& !(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
 			spec->zero = 1;
 		else if (s[i] >= '1' && s[i] <= '9' && !(spec->widt) && (spec->prec < 0)
@@ -48,12 +48,18 @@ int	parse_spec(t_spec *spec, char *s)
 		{
 			spec->widt = ft_atoi(s + i);
 			i =i + num_len(spec->widt) - 1;
+			//printf("%d", i);
 		}
 		//else if (s[i] == '.' && (spec->prec < 0) && !(spec->size) && !(spec->type))
 		else if (s[i] == '.')
 		{
-			spec->prec = ft_atoi(s + i + 1);
-			i += num_len(spec->prec);
+			if (s[i + 1] >= '0' && s[i + 1] <= '9')
+			{
+				spec->prec = ft_atoi(s + i + 1);
+				i += num_len(spec->prec);
+			}
+			else
+				spec->prec = 0;
 		}
 		//if (s[i] == 'c' || s[i] == 'd' || s[i] == 'f' || s[i] == 'o'|| s[i] == 'u'||
 		//		s[i] == 'x'|| s[i] == 'X'|| s[i] == 's'|| s[i] == 'p'|| s[i] == 'i'
@@ -141,9 +147,9 @@ int	ft_printf(const char *format, ...)
 			i += parsed;
 			//print_spec(spec);
 			if (spec->type == 'd' || spec->type == 'i')
-				k += print_signed_numb(spec, va_arg(ap,long long int));
-			else if (spec->type == 'o' || spec->type == 'u' || spec->type == 'x'
-					|| spec->type == 'X')
+				k += print_signed_numb(spec, va_arg(ap, long long int));
+			else if (spec->type == 'o' || spec->type == 'u' ||
+					spec->type == 'x' || spec->type == 'X')
 				k += print_unsigned_numb(spec, va_arg(ap, unsigned long long int));
 			else if (spec->type == 'c')
 				k += print_char(spec, va_arg(ap, int));
@@ -152,7 +158,9 @@ int	ft_printf(const char *format, ...)
 				k += print_string(spec, va_arg(ap, char*));
 			}
 			else if (spec->type == 'p')
-				k += print_point(spec, va_arg(ap, char*));
+				k += print_point(spec, va_arg(ap, void*));
+			else if (spec->type == 'f')
+				k += print_float(spec, va_arg(ap, long double));
 			else
 				k += print_char(spec, spec->type);
 			initialize(spec);
@@ -173,13 +181,17 @@ int main()
 //	unsigned long int ul = 4294967295; //4294967295
 //	unsigned short int us = 65535; //65535
 //	unsigned char uc = 255; //255
+//	unsigned int ui = 4294967295;
 //	printf("%#llo\n", ull);
 //	ft_printf("%#llo\n", ull);
 //	printf("%#lo\n", ul);
 //	ft_printf("%#lo\n", ul);
 //	printf("%#ho\n", us);
 //	ft_printf("%#ho\n", us);
-	printf("Unix: %#16X\n", 12345678);
-	ft_printf("My  : %#16X\n", 12345678);
+//	long long int lli = -42;
+	double d = 4.3123;
+	long double ld = 813.312342342543533454454675678686752344543353456456556786787978923423423423423432432456768678789798;
+	printf("%d" ,printf("Unix: %f %.50Lf\n", d, ld));
+	printf("%d" , ft_printf("My  : %f %Lf\n", d, ld));
 	return (0);
 }
