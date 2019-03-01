@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 13:58:28 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/01 14:45:58 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/01 16:10:17 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,12 +179,12 @@ int	ft_printf(const char *format, ...)
 
 int main()
 {
-	double ld = 0.88671875;
+	double ld = 0 * INFINITY;//0.88671875;
 	int d = 312;
 
 	printf("Unix: % 0.9d\n", d);
 	ft_printf("My:   % 0.9d\n", d);
-	printf("Unix: %20.9f\n", ld);
-	ft_printf("My:   %20.9f\n", ld);
+	printf("Unix: %+20.2f\n", ld);
+	ft_printf("My:   %+20.2f\n", ld);
 	return (0);
 }
