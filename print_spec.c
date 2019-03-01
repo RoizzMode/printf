@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/07 14:25:23 by lschambe          #+#    #+#             */
-/*   Updated: 2019/02/17 15:08:42 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/02/22 15:42:13 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,15 +248,20 @@ int	print_unsigned_numb(t_spec *spec, unsigned long long int num)
 			i = k;
 		else
 			i--;
-		if (spec->type == 'X' && spec->octo && spec->zero)
-			str[1] = 'X';
-		if (spec->type == 'x' && spec->octo && spec->zero)
-			str[1] = 'x';
 		while (k >= 0)
 		{
 			str[i] = s[k];
 			i--;
 			k--;
+		}
+		if (spec->type == 'X' && spec->octo && spec->zero)
+			str[1] = 'X';
+		if (spec->type == 'x' && spec->octo && spec->zero)
+		{
+			if (spec->prec > -1)
+				str[i + 2] = 'x';
+			else
+				str[1] = 'x';
 		}
 		ft_putstr(str);
 		if (ft_strlen(s))
@@ -264,8 +269,10 @@ int	print_unsigned_numb(t_spec *spec, unsigned long long int num)
 		free(str);
 		return(len);
 	}
-	//if (spec->type == 'X' && spec->octo && spec->zero)
-	//	s[1] = 'X';
+	if (spec->type == 'X' && spec->octo && spec->zero)
+		s[1] = 'X';
+	if (spec->type == 'x' && spec->octo && spec->zero)
+		s[1] = 'x';
 	ft_putstr(s);
 	if (ft_strlen(s))
 		free(s);

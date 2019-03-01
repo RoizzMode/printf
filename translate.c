@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/13 16:11:40 by lschambe          #+#    #+#             */
-/*   Updated: 2019/02/17 15:00:47 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/02/22 15:59:47 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,7 @@ char *dec_to_oct(unsigned long long int num, t_spec *spec)
 	check = 1;
 	if (len < spec->prec)
 		len = spec->prec - 1;
-	if (spec->octo && num)
+	else if (spec->octo && num)
 			len++;
 	oct = (char*)malloc(sizeof(char) * len + 2);
 	if (!oct)
@@ -158,6 +158,7 @@ char *dec_to_oct(unsigned long long int num, t_spec *spec)
 		oct[len--] = (unnum % 8) * check + '0';
 	if (spec->octo && num)
 		oct[0] = '0';
+//	ft_putstr(oct);
 	return (oct);
 }
 

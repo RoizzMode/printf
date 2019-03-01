@@ -6,13 +6,13 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 13:58:28 by lschambe          #+#    #+#             */
-/*   Updated: 2019/02/17 15:26:36 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/01 14:45:58 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int	num_len(int num)
+int	num_len(int64_t num)
 {
 	int i;
 
@@ -159,8 +159,10 @@ int	ft_printf(const char *format, ...)
 			}
 			else if (spec->type == 'p')
 				k += print_point(spec, va_arg(ap, void*));
+			else if (spec->type == 'f' && spec->size == 'L')
+				k += print_long_double(spec, va_arg(ap, long double));
 			else if (spec->type == 'f')
-				k += print_float(spec, va_arg(ap, long double));
+				k += print_double(spec, va_arg(ap, double));
 			else
 				k += print_char(spec, spec->type);
 			initialize(spec);
@@ -177,21 +179,12 @@ int	ft_printf(const char *format, ...)
 
 int main()
 {
-//	unsigned long long int ull = 9223372036854775807; //9223372036854775807;
-//	unsigned long int ul = 4294967295; //4294967295
-//	unsigned short int us = 65535; //65535
-//	unsigned char uc = 255; //255
-//	unsigned int ui = 4294967295;
-//	printf("%#llo\n", ull);
-//	ft_printf("%#llo\n", ull);
-//	printf("%#lo\n", ul);
-//	ft_printf("%#lo\n", ul);
-//	printf("%#ho\n", us);
-//	ft_printf("%#ho\n", us);
-//	long long int lli = -42;
-	double d = 4.3123;
-	long double ld = 813.312342342543533454454675678686752344543353456456556786787978923423423423423432432456768678789798;
-	printf("%d" ,printf("Unix: %f %.50Lf\n", d, ld));
-	printf("%d" , ft_printf("My  : %f %Lf\n", d, ld));
+	double ld = 0.88671875;
+	int d = 312;
+
+	printf("Unix: % 0.9d\n", d);
+	ft_printf("My:   % 0.9d\n", d);
+	printf("Unix: %20.9f\n", ld);
+	ft_printf("My:   %20.9f\n", ld);
 	return (0);
 }
