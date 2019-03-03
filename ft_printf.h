@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 16:43:36 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/01 14:35:28 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/03 13:52:56 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ char *signed_itoa(long long int num, t_spec *spec);
 char *print_pointer(unsigned long long int num, t_spec *spec);
 int	num_len(int64_t num);
 char *itoa_after_p(double num);
-void round_p(t_float *tf, int prec);
+double round_p(double num, int prec);
 int64_t		ft_pow2(int n, int64_t p);
 //static int	ft_len(int64_t n);
 char		*ft_itoa2(int64_t n, t_spec* spec);

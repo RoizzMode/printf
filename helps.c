@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/01 14:32:35 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/01 14:33:50 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/03 14:07:57 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,13 @@ char *itoa_after_p(double num)
 	return (s);
 }
 
-void round_p(t_float *tf, int prec)
+double round_p(double num, int prec)
 {
 	double ld;
-	ld = ((int64_t)(tf->after_p * ft_pow2(10, prec) +
-				(tf->after_p >= 0 ? 0.5 : -0.5))) / (double)ft_pow2(10, prec);
-	tf->after_p = (int64_t)(tf->after_p * (ft_pow2(10, prec)));
+	ld = ((int64_t)(num * ft_pow2(10, prec) +
+				(num >= 0 ? 0.5 : -0.5))) / (double)ft_pow2(10, prec);
+	num = ld;
+	return (num);
 }
 int print_float(t_spec *spec, long double num)
 {
@@ -103,10 +104,15 @@ char		*ft_itoa2(int64_t n, t_spec* spec)
 	int64_t		notn;
 	int		check;
 	int len;
+	int len_after;
 
 	check = 1;
 	notn = n;
 	len = ft_len(n);
+	if (spec->prec > 0)
+		len_after = spec->prec + 1;
+	else
+		len_after = 0;
 	if (n < 0)
 		check = -1;
 	if (n < 0 || spec->plu || spec->spac)
@@ -122,14 +128,11 @@ char		*ft_itoa2(int64_t n, t_spec* spec)
 	s[i--] = (notn % 10) * check + '0';
 	while (notn /= 10)
 		s[i--] = (check * notn % 10 + '0');
-	if (check < 0 && (!(spec->minu || spec->zero) ||
-				(spec->zero && spec->widt < (int)ft_strlen(s))))
+	if (check < 0 && !((spec->minu || spec->zero) && spec->widt >= (len + len_after)))
 		s[0] = '-';
-	if (check > 0 && spec->plu && (!(spec->minu || spec->zero)
-				|| (spec->zero && spec->widt < (int)ft_strlen(s))))
+	if (check > 0 && spec->plu && !((spec->minu || spec->zero) && spec->widt >= (len + len_after)))
 		s[0] = '+';
-	if (check > 0 && spec->spac && (!(spec->minu || spec->zero)
-				|| (spec->zero && spec->widt < (int)ft_strlen(s))))
+	if (check > 0 && spec->spac && !((spec->minu || spec->zero) && spec->widt >= (len + len_after)))
 		s[0] = ' ';
 	return (s);
 }

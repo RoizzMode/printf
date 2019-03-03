@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/17 15:18:05 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/01 16:09:53 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/03 14:12:15 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,63 +17,28 @@ int read_base(double num)
 {
 	unsigned char *casted;
 	int i;
-//	int j;
 	int one;
 	int null;
 
 	casted = (unsigned char *) & num;
 	one = 0;
 	null = 0;
-/*	i = 7;
-	while (i > -1)
-	{
-		j = 7;
-		while (j > -1)
-		{
-			printf(" %d %d:",i,j);
-			if (casted[i] & (1 << j))
-			{
-				printf("1");
-				one = 1;
-			}
-			else
-			{
-				printf("0");
-				null = 1;
-			}
-			j--;
-		}
-		i--;
-	}
-	printf("\n");*/
 	i = 6;
 	while (i > -1)
 	{
 		if (casted[7] & (1 << i))
-		{
-		//	printf("1");
 			one = 1;
-		}
 		else
-		{
-		//	printf("0");
 			null = 1;
-		}
 		i--;
 	}
 	i = 7;
 	while (i > 3)
 	{
 		if (casted[6] & (1 << i))
-		{
-		//	printf("1");
 			one = 1;
-		}
 		else
-		{
-		//	printf("0");
 			null = 1;
-		}
 		i--;
 	}
 	if (one && !null)
@@ -98,15 +63,9 @@ int read_mantiss(double num)
 	while (i > -1)
 	{
 		if (casted[6] & (1 << i))
-		{
-//			printf("1");
 			one = 1;
-		}
 		else
-		{
-//			printf("0");
 			null = 1;
-		}
 		i--;
 	}
 	i = 5;
@@ -116,15 +75,9 @@ int read_mantiss(double num)
 		while (j > -1)
 		{
 			if (casted[1] & (1 << j))
-			{
-//				printf("1");
 				one = 1;
-			}
 			else
-			{
-//				printf("0");
 				null = 1;
-			}
 			j--;
 		}
 		i--;
@@ -136,14 +89,114 @@ int read_mantiss(double num)
 	return (-1);
 }
 
-int	nan_inf_0(double num, t_spec *spec)
+int read_sign(double num)
+{
+	unsigned char *casted;
+
+	casted = (unsigned char *) & num;
+	if (casted[7] & (1 << 7))
+		return(1);
+	return (0);
+}
+
+int print_zero(double num, t_spec *spec)
+{
+	char *s;
+	int len;
+	int i;
+	int k;
+	char *str;
+	int len_after;
+
+	len = 1;
+	if (spec->spac || spec->plu)
+		len++;
+	if (spec->prec > -1)
+		len += spec->prec + 1;
+	if (spec->prec > 0)
+		len_after = spec->prec + 1;
+	else
+		len_after = 0;
+	s = ft_strnew(len);
+	i = 0;
+	while (i < len)
+		s[i++] = '0';
+	if (spec->spac || spec->plu)
+		s[2] = '.';
+	else
+		s[1] = '.';
+	if (read_sign(num) == 1 && (spec->plu || spec->spac) && !((spec->minu || spec->zero) && spec->widt > (len + len_after)))
+		s[0] = '-';
+	if (read_sign(num) == 0 && spec->plu && !((spec->minu || spec->zero) && spec->widt > (len + len_after)))
+		s[0] = '+';
+	if (read_sign(num) == 0 && spec->spac && !((spec->minu || spec->zero) && spec->widt > (len + len_after)))
+		s[0] = ' ';
+	if (spec->widt > len)
+	{
+	//	len = spec->widt;
+		if (spec->zero && spec->minu)
+			spec->zero = 0;
+		k = len - 1;
+		len = spec->widt;
+		str = ft_strnew(spec->widt);
+		i = 0;
+		while (i < spec->widt)
+		{
+			if (spec->zero)
+				str[i++] = '0';
+			else
+				str[i++] = ' ';
+		}
+		if (spec->minu)
+			i = k;
+		else
+			i--;
+		while (k >= 0)
+		{
+			str[i] = s[k];
+			i--;
+			k--;
+		}
+		if (read_sign(num) == 1 && (spec->plu || spec->spac) && (spec->minu || spec->zero))
+		{
+			if (spec->minu || spec->zero)
+				str[0] = '-';
+			else
+				str[spec->widt - ft_strlen(s) + 1] = '-';
+		}
+		if (read_sign(num) == 0 && spec->plu && (spec->minu || spec->zero))
+		{
+			if (spec->minu || spec->zero)
+				str[0] = '+';
+			else
+				str[spec->widt - ft_strlen(s) + 1] = '+';
+		}
+		if (read_sign(num) == 0 && spec->spac && (spec->minu || spec->zero))
+		{
+			if (spec->minu || spec->zero)
+				str[0] = ' ';
+			else
+				str[spec->widt - ft_strlen(s) + 1] = ' ';
+		}
+		ft_putstr(str);
+		free(str);
+		return(len);
+	}
+	ft_putstr(s);
+	free(s);
+	return (len);
+}
+
+int	nan_inf(double num, t_spec *spec)
 {
 	char *s;
 	char *str;
 	int i;
 	int k;
 	int len;
-//	printf("%d", read_base(num));
+
+	len = 0;
+	s = NULL;
 	if (read_base(num) == 1 && read_mantiss(num) == -1)
 	{
 		s = ft_strnew(3);
@@ -151,31 +204,36 @@ int	nan_inf_0(double num, t_spec *spec)
 		s[1] = 'a';
 		s[2] = 'n';
 		len = 3;
-		if (spec->widt > len)
+	}
+	if (spec->widt > len && len > 0)
+	{
+		k = len - 1;
+		len = spec->widt;
+		str = ft_strnew(spec->widt);
+		i = 0;
+		while (i < spec->widt)
 		{
-			k = len - 1;
-			len = spec->widt;
-			str = ft_strnew(spec->widt);
-			i = 0;
-			while (i < spec->widt)
-			{
-					str[i++] = ' ';
-			}
-			if (spec->minu)
-				i = k;
-			else
-				i--;
-			while (k >= 0)
-			{
-				str[i] = s[k];
-				i--;
-				k--;
-			}
-			ft_putstr(str);
-			free(str);
-			free(s);
-			return (len);
+				str[i++] = ' ';
 		}
+		if (spec->minu)
+			i = k;
+		else
+			i--;
+		while (k >= 0)
+		{
+			str[i] = s[k];
+			i--;
+			k--;
+		}
+		ft_putstr(str);
+		free(str);
+		free(s);
+		return (len);
+	}
+	if (!read_base(num) && !read_mantiss(num))
+		return(print_zero(num, spec));
+	if (s)
+	{
 		ft_putstr(s);
 		free(s);
 		return (len);
@@ -192,24 +250,30 @@ int print_double(t_spec *spec, double num)
 	int i;
 	int k;
 
+	if (spec->prec == -1)
+		spec->prec = 6;
+	num = round_p(num, spec->prec);
 	tf = (t_float*)malloc(sizeof(t_float));
 	tf->before_p = (int64_t)num;
 	tf->after_p = num - tf->before_p;
 	if (spec->plu && spec->spac)
 		spec->spac = 0;
 	len = 0;
-	if ((len = nan_inf_0(num, spec)))
+	if ((len = nan_inf(num, spec)))
 		return (len);
 	else
 	{
+//	printf("\nBefore: %lld\n", tf->before_p);
+//	printf("\nAfter: %f\n", tf->after_p);
 		s = ft_itoa2(tf->before_p, spec);
-		round_p(tf, spec->prec);
+		tf->after_p = (int64_t)(tf->after_p * (ft_pow2(10, spec->prec)));
+		//round_p(tf, spec->prec);
 		if (spec->prec != 0)
 			s = ft_strjoin(s, itoa_after_p(tf->after_p));
 		len = ft_strlen(s);
 	}
 	//ft_putstr(s);
-	if (spec->widt > len)
+	if (spec->widt >= len)
 	{
 		if (spec->zero && spec->minu)
 			spec->zero = 0;
@@ -243,6 +307,7 @@ int print_double(t_spec *spec, double num)
 		}
 		if (num > 0 && spec->plu && (spec->minu || spec->zero))
 		{
+			//printf("here");
 			if (spec->minu || spec->zero)
 				str[0] = '+';
 			else
