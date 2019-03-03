@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 13:58:28 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/03 14:07:17 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/03 14:41:17 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,20 +179,21 @@ int	ft_printf(const char *format, ...)
 
 int main()
 {
-	double lz = 0.0;//0.88671875;
+	double lz = -0.0;//0.88671875;
 	double ld = 0.88671875;
+	double li = INFINITY;
 
-	printf("Unix: %+-9.14f\n", ld);
-	ft_printf("My:   %+-9.14f\n", ld);
+	printf("Unix: %f\n", li);
+	ft_printf("My:   %f\n", li);
 	printf("__________________________\n");
-	printf("Unix: %+020.14f\n", ld);
-	ft_printf("My:   %+020.14f\n", ld);
+	printf("Unix: %+020.14f\n", li);
+	ft_printf("My:   %+020.14f\n", li);
 	printf("__________________________\n");
-	printf("Unix: %+20.14f\n", ld);
-	ft_printf("My:   %+20.14f\n", ld);
+	printf("Unix: %+20.14f\n", li);
+	ft_printf("My:   %+20.14f\n", li);
 	printf("__________________________\n");
-	printf("Unix: %+-9f\n", ld);
-	ft_printf("My:   %+-9f\n", ld);
+	printf("Unix: %+-10f\n", li);
+	ft_printf("My:   %+-10f\n", li);
 	printf("__________________________\n");
 	printf("Unix: %+f\n", ld);
 	ft_printf("My:   %+f\n", ld);
@@ -205,6 +206,12 @@ int main()
 	printf("__________________________\n");
 	printf("Unix: %+-9.14f\n", lz);
 	ft_printf("My:   %+-9.14f\n", lz);
+	printf("__________________________\n");
+	printf("Unix: %9f\n", lz);
+	ft_printf("My:   %9f\n", lz);
+	printf("__________________________\n");
+	printf("Unix: %-9f\n", lz);
+	ft_printf("My:   %-9f\n", lz);
 	printf("__________________________\n");
 	return (0);
 }
