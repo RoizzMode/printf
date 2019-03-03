@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/01 14:32:35 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/03 14:07:57 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/03 19:14:48 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,20 +40,6 @@ double round_p(double num, int prec)
 				(num >= 0 ? 0.5 : -0.5))) / (double)ft_pow2(10, prec);
 	num = ld;
 	return (num);
-}
-int print_float(t_spec *spec, long double num)
-{
-	unsigned char *casted;
-
-	if (spec->prec < 0)
-		spec->prec = 6;
-	printf("%Lf", num);
-	if (spec->size == 'L')
-		print_long_double(spec, num);
-	else
-		print_double(spec, (double)num);
-	casted = (unsigned char *) & num;
-	return (1);
 }
 
 int64_t		ft_pow2(int n, int64_t p)

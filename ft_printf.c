@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 13:58:28 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/03 14:41:17 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/03 19:39:14 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,17 +40,14 @@ int	parse_spec(t_spec *spec, char *s)
 			spec->spac = 1;
 		else if (s[i] == '#' && !(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
 			spec->octo = 1;
-		else if (s[i] == '0' /*&& !((s[i - 1] >= '0' && s[i - 1] <= '9') || s[i - 1] == '.')*/
-				&& !(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
+		else if (s[i] == '0' && !(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
 			spec->zero = 1;
 		else if (s[i] >= '1' && s[i] <= '9' && !(spec->widt) && (spec->prec < 0)
 				&& !(spec->size) && !(spec->type))
 		{
 			spec->widt = ft_atoi(s + i);
 			i =i + num_len(spec->widt) - 1;
-			//printf("%d", i);
 		}
-		//else if (s[i] == '.' && (spec->prec < 0) && !(spec->size) && !(spec->type))
 		else if (s[i] == '.')
 		{
 			if (s[i + 1] >= '0' && s[i + 1] <= '9')
@@ -61,10 +58,6 @@ int	parse_spec(t_spec *spec, char *s)
 			else
 				spec->prec = 0;
 		}
-		//if (s[i] == 'c' || s[i] == 'd' || s[i] == 'f' || s[i] == 'o'|| s[i] == 'u'||
-		//		s[i] == 'x'|| s[i] == 'X'|| s[i] == 's'|| s[i] == 'p'|| s[i] == 'i'
-		//		|| (s[i] == '%' && i != 0))
-		//	spec->type = s[i];
 		else if (s[i] == 'l' && s[i + 1] == 'l' && !(spec->size) && !(spec->type))
 		{
 			spec->size = 'b';
@@ -84,7 +77,6 @@ int	parse_spec(t_spec *spec, char *s)
 			spec->type = s[i];
 		}
 		i++;
-		//printf("%c ", s[i]);
 	}
 	if (!spec->type)
 		return (0);
@@ -163,6 +155,8 @@ int	ft_printf(const char *format, ...)
 				k += print_long_double(spec, va_arg(ap, long double));
 			else if (spec->type == 'f')
 				k += print_double(spec, va_arg(ap, double));
+			else if (spec->type == '%')
+				k += print_proc(spec, spec->type);
 			else
 				k += print_char(spec, spec->type);
 			initialize(spec);
@@ -173,45 +167,24 @@ int	ft_printf(const char *format, ...)
 			k++;
 		}
 	}
+	free(spec);
 	va_end(ap);
 	return (k);
 }
 
-int main()
+/*int main()
 {
-	double lz = -0.0;//0.88671875;
-	double ld = 0.88671875;
-	double li = INFINITY;
+//	int d = -64564;
+//	unsigned int u = 31243;
+//	char *s = "qwerty";
+//	char c = 'c';
+//	int *p = &d;
+	double f = 0.883124;
+	long double lf = -312.3125;
 
-	printf("Unix: %f\n", li);
-	ft_printf("My:   %f\n", li);
-	printf("__________________________\n");
-	printf("Unix: %+020.14f\n", li);
-	ft_printf("My:   %+020.14f\n", li);
-	printf("__________________________\n");
-	printf("Unix: %+20.14f\n", li);
-	ft_printf("My:   %+20.14f\n", li);
-	printf("__________________________\n");
-	printf("Unix: %+-10f\n", li);
-	ft_printf("My:   %+-10f\n", li);
-	printf("__________________________\n");
-	printf("Unix: %+f\n", ld);
-	ft_printf("My:   %+f\n", ld);
-	printf("__________________________\n");
-	printf("Unix: %+09.f\n", ld);
-	ft_printf("My:   %+09.f\n", ld);
-	printf("__________________________\n");
-	printf("Unix: %f\n", lz);
-	ft_printf("My:   %f\n", lz);
-	printf("__________________________\n");
-	printf("Unix: %+-9.14f\n", lz);
-	ft_printf("My:   %+-9.14f\n", lz);
-	printf("__________________________\n");
-	printf("Unix: %9f\n", lz);
-	ft_printf("My:   %9f\n", lz);
-	printf("__________________________\n");
-	printf("Unix: %-9f\n", lz);
-	ft_printf("My:   %-9f\n", lz);
-	printf("__________________________\n");
+	printf("%d ", printf("%20f\n", f));
+	printf("%d ", ft_printf("%20f\n", f));
+	printf("%d ", printf("%20Lf\n", lf));
+	printf("%d ", ft_printf("%20Lf\n", lf));
 	return (0);
-}
+}*/

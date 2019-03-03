@@ -1,22 +1,84 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print_double.c                                     :+:      :+:    :+:   */
+/*   print_long_double.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/02/17 15:18:05 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/03 19:28:03 by lschambe         ###   ########.fr       */
+/*   Created: 2019/03/03 15:55:57 by lschambe          #+#    #+#             */
+/*   Updated: 2019/03/03 19:34:26 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-#include <math.h>
 
-int read_base(double num)
+void	read_bits(long double num)
+{
+	unsigned char *casted;
+	casted = (unsigned char *) & num;
+	int i;
+	int j;
+	i = 9;
+	while (i > -1)
+	{
+		j = 7;
+		while (j > -1)
+		{
+			printf(" |%d %d: ",i, j);
+			if (casted[i] & (1 << j))
+				printf("1|");
+			else
+				printf("0|");
+			j--;
+		}
+		i--;
+	}
+}
+
+int read_base_long(long double num)
 {
 	unsigned char *casted;
 	int i;
+	int one;
+	int null;
+
+	casted = (unsigned char *) & num;
+	one = 0;
+	null = 0;
+	i = 6;
+	while (i > -1)
+	{
+		if (casted[9] & (1 << i))
+			one = 1;
+		else
+			null = 1;
+		i--;
+	}
+	i = 7;
+	while (i > -1)
+	{
+		if (casted[8] & (1 << i))
+			one = 1;
+		else
+			null = 1;
+		i--;
+	}
+	if (casted[7] & (1 << 7))
+		one = 1;
+	else
+		null = 1;
+	if (one && !null)
+		return (1);
+	if (!one && null)
+		return (0);
+	return (-1);
+}
+
+int read_mantiss_long(long double num)
+{
+	unsigned char *casted;
+	int i;
+	int j;
 	int one;
 	int null;
 
@@ -32,43 +94,7 @@ int read_base(double num)
 			null = 1;
 		i--;
 	}
-	i = 7;
-	while (i > 3)
-	{
-		if (casted[6] & (1 << i))
-			one = 1;
-		else
-			null = 1;
-		i--;
-	}
-	if (one && !null)
-		return (1);
-	if (!one && null)
-		return (0);
-	return (-1);
-}
-
-int read_mantiss(double num)
-{
-	unsigned char *casted;
-	int i;
-	int j;
-	int one;
-	int null;
-
-	casted = (unsigned char *) & num;
-	one = 0;
-	null = 0;
-	i = 3;
-	while (i > -1)
-	{
-		if (casted[6] & (1 << i))
-			one = 1;
-		else
-			null = 1;
-		i--;
-	}
-	i = 5;
+	i = 6;
 	while (i > 1)
 	{
 		j = 7;
@@ -89,18 +115,17 @@ int read_mantiss(double num)
 	return (-1);
 }
 
-int read_sign(double num)
+int read_sign_long(long double num)
 {
 	unsigned char *casted;
 
 	casted = (unsigned char *) & num;
-	if (casted[7] & (1 << 7))
+	if (casted[9] & (1 << 7))
 		return(1);
 	return (0);
 }
 
-
-int print_zero(double num, t_spec *spec)
+int print_zero_long(long double num, t_spec *spec)
 {
 	char *s;
 	int len;
@@ -187,7 +212,7 @@ int print_zero(double num, t_spec *spec)
 	return (len);
 }
 
-int		print_inf(t_spec *spec, double num)
+int		print_inf_long(t_spec *spec, long double num)
 {
 	char *s;
 	int len;
@@ -216,7 +241,7 @@ int		print_inf(t_spec *spec, double num)
 		str = ft_strnew(spec->widt);
 		i = 0;
 		while (i < spec->widt)
-			str[i++] = ' ';
+				str[i++] = ' ';
 		if (spec->minu)
 			i = k;
 		else
@@ -234,7 +259,7 @@ int		print_inf(t_spec *spec, double num)
 	return (len);
 }
 
-int	nan_inf_0(double num, t_spec *spec)
+int	nan_inf_0_long(long double num, t_spec *spec)
 {
 	char *s;
 	char *str;
@@ -244,11 +269,12 @@ int	nan_inf_0(double num, t_spec *spec)
 
 	len = 0;
 	s = NULL;
-	if (!read_base(num) && !read_mantiss(num))
+//	read_bits(num);
+	if (!read_base_long(num) && !read_mantiss_long(num))
 		return(print_zero(num, spec));
-	if (read_base(num) == 1 && !read_mantiss(num))
+	if (read_base_long(num) == 1 && !read_mantiss_long(num))
 		return(print_inf(spec, num));
-	if (read_base(num) == 1 && read_mantiss(num) == -1)
+	if (read_base_long(num) == 1 && read_mantiss_long(num) == -1)
 	{
 		s = ft_strnew(3);
 		s[0] = 'n';
@@ -290,9 +316,10 @@ int	nan_inf_0(double num, t_spec *spec)
 	return (0);
 }
 
-int print_double(t_spec *spec, double num)
+int print_long_double(t_spec *spec, long double num)
 {
-	t_float *tf;
+
+	t_dfloat *tf;
 	char *s;
 	char *str;
 	char *temp;
@@ -305,24 +332,24 @@ int print_double(t_spec *spec, double num)
 	if (spec->plu && spec->spac)
 		spec->spac = 0;
 	len = 0;
-	if ((len = nan_inf_0(num, spec)))
+	if ((len = nan_inf_0_long(num, spec)))
 		return (len);
 	else
 	{
-		num = round_p(num, spec->prec);
-		tf = (t_float*)malloc(sizeof(t_float));
+		num = round_p_long(num, spec->prec);
+		tf = (t_dfloat*)malloc(sizeof(t_dfloat));
 		tf->before_p = (int64_t)num;
 		tf->after_p = num - tf->before_p;
 		s = ft_itoa2(tf->before_p, spec);
-		tf->after_p = (int64_t)(tf->after_p * (ft_pow2(10, spec->prec)));
 		if (spec->prec != 0)
 		{
 			str = ft_strdup(s);
+			tf->after_p = (int64_t)(tf->after_p * (ft_pow2(10, spec->prec)));
+			temp = itoa_after_p_long(tf->after_p);
 			free(s);
-			temp = itoa_after_p(tf->after_p);
 			s = ft_strjoin(str, temp);
-			free(temp);
 			free(str);
+			free(temp);
 		}
 		len = ft_strlen(s);
 	}

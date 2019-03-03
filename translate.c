@@ -6,54 +6,11 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/13 16:11:40 by lschambe          #+#    #+#             */
-/*   Updated: 2019/02/22 15:59:47 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/03 17:21:37 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-
-/*char		*unsigned_itoa(unsigned long long int num, t_spec *spec)
-{
-	int		i;
-	char	*s;
-	int		unnum;
-
-	i = 0;
-	if (spec->size == 'l')
-		unnum = (unsigned long int)num;
-	else if (spec->size == 's')
-		unnum = (unsigned char)num;
-	else if (spec->size == 'h')
-		unnum = (unsigned short int)num;
-	else if (spec->size == 'b')
-		unnum = num;
-	else
-		unnum = (unsigned int)num;
-//	i = ft_len(n);
-	while (unnum > 9 || unnum < -9)
-	{
-		i++;
-		unnum /= 10;
-	}
-	if (spec->size == 'l')
-		unnum = (unsigned long int)num;
-	else if (spec->size == 's')
-		unnum = (unsigned char)num;
-	else if (spec->size == 'h')
-		unnum = (unsigned short int)num;
-	else if (spec->size == 'b')
-		unnum = num;
-	else
-		unnum = (unsigned int)num;
-	s = (char*)malloc(sizeof(char) * i + 2);
-	if (!s)
-		return (NULL);
-	s[i + 1] = '\0';
-	s[i--] = (unnum % 10) + '0';
-	while (unnum /= 10)
-		s[i--] = (unnum % 10 + '0');
-	return (s);
-}*/
 
 char *unsigned_itoa(unsigned long long int num, t_spec *spec)
 {
@@ -158,7 +115,6 @@ char *dec_to_oct(unsigned long long int num, t_spec *spec)
 		oct[len--] = (unnum % 8) * check + '0';
 	if (spec->octo && num)
 		oct[0] = '0';
-//	ft_putstr(oct);
 	return (oct);
 }
 
@@ -201,13 +157,7 @@ char *dec_to_hex(unsigned long long int num, t_spec *spec)
 	if (len < spec->prec)
 		len = spec->prec - 1;
 	if (spec->octo && num)
-	{
-		//if (len < spec->widt)
-		//	len = spec->widt - 1;
-		//else
-			len += 2;
-		//	printf("%d\n", len);
-	}
+		len += 2;
 	hex = (char*)malloc(sizeof(char) * len + 2);
 	if (!hex)
 		return (NULL);
@@ -225,7 +175,7 @@ char *dec_to_hex(unsigned long long int num, t_spec *spec)
 		else
 			hex[len--] = (unnum % 16) + '0';
 	}
-	if (spec->octo && num && !spec->zero)
+	if (spec->octo && num && !((spec->zero || spec->minu) && spec->widt > i))
 	{
 		hex[1] = 'x';
 		hex[0] = '0';
@@ -272,13 +222,7 @@ char *dec_to_heX(unsigned long long int num, t_spec *spec)
 	if (len < spec->prec)
 		len = spec->prec - 1;
 	if (spec->octo && num)
-	{
-		//if (len < spec->widt)
-		//	len = spec->widt - 1;
-		//else
 			len += 2;
-		//	printf("%d\n", len);
-	}
 	hex = (char*)malloc(sizeof(char) * len + 2);
 	if (!hex)
 		return (NULL);
@@ -296,7 +240,7 @@ char *dec_to_heX(unsigned long long int num, t_spec *spec)
 		else
 			hex[len--] = (unnum % 16) + '0';
 	}
-	if (spec->octo && num && !spec->zero)
+	if (spec->octo && num && !((spec->zero || spec->minu) && spec->widt > i))
 	{
 		hex[1] = 'X';
 		hex[0] = '0';
@@ -313,44 +257,16 @@ char *print_pointer(unsigned long long int num, t_spec *spec)
 
 	len = 0;
 	i = 0;
-	//if (!spec->prec && !num)
-	//	return("");
-	//if (spec->size == 'l')
-	//	unnum = (unsigned long int)num;
-	//else if (spec->size == 's')
-	//	unnum = (unsigned char)num;
-	//else if (spec->size == 'h')
-	//	unnum = (unsigned short int)num;
-	//else if (spec->size == 'b')
 	unnum = num;
-	//else
-	//	unnum = (unsigned int)num;
 	while (unnum / 16)
 	{
 		len++;
 		unnum /= 16;
 	}
-	/*if (spec->size == 'l')
-		unnum = (unsigned long int)num;
-	else if (spec->size == 's')
-		unnum = (unsigned char)num;
-	else if (spec->size == 'h')
-		unnum = (unsigned short int)num;
-	else if (spec->size == 'b')
-		unnum = (unsigned long long int)num;
-	else
-		unnum = (unsigned int)num;*/
 	unnum = num;
 	if (len < spec->prec)
 		len = spec->prec - 1;
-	//if (spec->octo && num)
-	//{
-		//if (len < spec->widt)
-		//	len = spec->widt - 1;
-		//else
 	len += 2;
-		//	printf("%d\n", len);
-	//}
 	hex = (char*)malloc(sizeof(char) * len + 2);
 	if (!hex)
 		return (NULL);
@@ -368,10 +284,7 @@ char *print_pointer(unsigned long long int num, t_spec *spec)
 		else
 			hex[len--] = (unnum % 16) + '0';
 	}
-	//if (spec->octo && num && !spec->zero)
-	//{
 	hex[1] = 'x';
 	hex[0] = '0';
-	//}
 	return (hex);
 }

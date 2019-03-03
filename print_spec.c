@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/07 14:25:23 by lschambe          #+#    #+#             */
-/*   Updated: 2019/02/22 15:42:13 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/03 18:50:27 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,11 @@ char *signed_itoa(long long int num, t_spec *spec)
 		unnum = num;
 	else
 		unnum = (int)num;
-	//printf("%lld", num);
 	while (unnum / 10)
 	{
-	//ft_putnbr(len);
 		len++;
 		unnum /= 10;
 	}
-	//ft_putnbr(len);
 	check = 1;
 	if (spec->size == 'l')
 		unnum = (long int)num;
@@ -79,32 +76,28 @@ char *signed_itoa(long long int num, t_spec *spec)
 		unnum = (int)num;
 	if (unnum < 0)
 		check = -1;
-//	ft_putnbr(len);
 	if (len < spec->prec)
 		len = spec->prec - 1;
 	if ((unnum < 0 || spec->plu || spec->spac))
 		len++;
-//	printf("%lld", num);
-//	ft_putnbr(len);
 	oct = (char*)malloc(sizeof(char) * len + 2);
 	if (!oct)
 		return (NULL);
 	while (i < len)
 		oct[i++] = '0';
-//	ft_putstr(oct);
-//	printf("%d", len);
 	oct[len + 1] = '\0';
 	oct[len--] = (unnum % 10) * check + '0';
-//	printf("%d", check);
 	while (unnum /= 10)
 		oct[len--] = (unnum % 10) * check + '0';
-	if (check < 0 && (!(spec->minu || spec->zero) || (spec->zero && spec->widt < (int)ft_strlen(oct) && spec->prec < 0)))
+//	if (check < 0 && (!(spec->minu || spec->zero) || (spec->zero && spec->widt < (int)ft_strlen(oct) && spec->prec < 0)))
+	if (check < 0  && !((spec->minu || spec->zero) && spec->widt > i))
 		oct[0] = '-';
-	if (check > 0 && spec->plu && (!(spec->minu || spec->zero) || (spec->zero && spec->widt < (int)ft_strlen(oct) && spec->prec < 0)))
+	if (check > 0 && spec->plu && !((spec->minu || spec->zero) && spec->widt > i))
 		oct[0] = '+';
-	if (check > 0 && spec->spac && (!(spec->minu || spec->zero) || (spec->zero && spec->widt < (int)ft_strlen(oct) && spec->prec < 0)))
+	if (check > 0 && spec->spac && !((spec->minu || spec->zero) && spec->widt > i))
+//	if (check > 0 && spec->spac && (!(spec->minu || spec->zero) || (spec->zero && spec->widt < (int)ft_strlen(oct) && spec->prec < 0)))
 		oct[0] = ' ';
-	//printf("\n%s\n", oct);
+//	ft_putstr(oct);
 	return (oct);
 }
 
@@ -117,34 +110,13 @@ int	print_signed_numb(t_spec *spec, long long int num)
 	int k;
 
 	i = 0;
-	//if (spec->type == 'i' || spec->type == 'd')
-	//printf("%lld", num);
 	s = signed_itoa(num, spec);
-	//else if (spec->type == 'o')
-	//	s = dec_to_oct(num, spec->octo);
-	//else if (spec->type == 'u')
-	//	s = ft_itoa(num);
-	//else if (spec->type == 'x')
-	//	s = dec_to_hex(num, spec->octo);
-	//else if (spec->type == 'X')
-	//	s = dec_to_heX(num, spec->octo);
-	//if (spec->widt > (int)ft_strlen(s))
-	//	len = spec->widt;
-	//else
-	//	len = ft_strlen(s);
-	//if (spec->prec > len)
-	//	len = spec->prec;
-	//ft_putstr(s);
 	len = (int)ft_strlen(s);
-//	printf("%d", len);
 	if (spec->widt >= (int)ft_strlen(s))
 	{
 		k = len - 1;
 		len = spec->widt;
-//		if ((num < 0 || spec->plu || spec->spac) && spec->minu)
-//			k++;
 		str = ft_strnew(len);
-//		printf("here");
 		while (i < len)
 		{
 			if (spec->zero && spec->prec < 0)
@@ -152,9 +124,6 @@ int	print_signed_numb(t_spec *spec, long long int num)
 			else
 				str[i++] = ' ';
 		}
-//		printf("%d", check_negative(num, spec));
-
-		//if (!check_negative(num, spec) && (spec->minu || spec->zero))
 		if (spec->minu)
 			i = k;
 		else
@@ -167,7 +136,6 @@ int	print_signed_numb(t_spec *spec, long long int num)
 		}
 		if (!check_negative(num, spec) && (spec->minu || spec->zero))
 		{
-			//printf("here");
 			if (spec->prec > 0 && spec->prec > (int)ft_strlen(s))
 				str[len - spec->prec - 1] = '-';
 			else if (spec->minu || spec->zero)
@@ -177,17 +145,16 @@ int	print_signed_numb(t_spec *spec, long long int num)
 		}
 		if (check_negative(num, spec) && spec->plu && (spec->minu || spec->zero))
 		{
-		//	printf("here");
-			if (spec->prec > 0 && spec->prec > (int)ft_strlen(s))
-				str[len - spec->prec - 1] = '+';
-			else if (spec->minu || spec->zero)
-				str[0] = '+';
-			else
-				str[len - spec->widt + 1] = '+';
+			str[0] = '+';
+			//if (spec->prec > 0 && spec->prec > (int)ft_strlen(s))
+			//	str[len - spec->prec - 1] = '+';
+			//else if (spec->minu || spec->zero)
+			//	str[0] = '+';
+			//else
+			//	str[len - spec->widt + 1] = '+';
 		}
 		if (check_negative(num, spec) && spec->spac && (spec->minu || spec->zero))
 		{
-		//	printf("here");
 			if (spec->prec > 0 && spec->prec > (int)ft_strlen(s))
 				str[len - spec->prec - 1] = ' ';
 			else if (spec->minu || spec->zero)
@@ -216,10 +183,6 @@ int	print_unsigned_numb(t_spec *spec, unsigned long long int num)
 	int i = 0;
 	int k;
 
-	//if (spec->octo && (spec->type == 'X' || spec->type == 'x') && !num)
-	//	return (0);
-	//if (spec->octo && (spec->type == 'o') && !num && !spec->prec)
-	//	return (0);
 	if (spec->minu && spec->zero)
 		spec->zero = 0;
 	if (spec->type == 'o')
@@ -231,8 +194,7 @@ int	print_unsigned_numb(t_spec *spec, unsigned long long int num)
 	else
 		s = dec_to_heX(num, spec);
 	len = (int)ft_strlen(s);
-	//printf("%d\n", len);
-	if (spec->widt > (int)ft_strlen(s))
+	if (spec->widt >= (int)ft_strlen(s))
 	{
 		k = len - 1;
 		len = spec->widt;
@@ -254,14 +216,15 @@ int	print_unsigned_numb(t_spec *spec, unsigned long long int num)
 			i--;
 			k--;
 		}
-		if (spec->type == 'X' && spec->octo && spec->zero)
-			str[1] = 'X';
-		if (spec->type == 'x' && spec->octo && spec->zero)
+		if (spec->type == 'X' && spec->octo && (spec->zero || spec->minu))
 		{
-			if (spec->prec > -1)
-				str[i + 2] = 'x';
-			else
-				str[1] = 'x';
+			str[0] = '0';
+			str[1] = 'X';
+		}
+		if (spec->type == 'x' && spec->octo && (spec->zero || spec->minu))
+		{
+			str[0] = '0';
+			str[1] = 'x';
 		}
 		ft_putstr(str);
 		if (ft_strlen(s))
@@ -269,10 +232,6 @@ int	print_unsigned_numb(t_spec *spec, unsigned long long int num)
 		free(str);
 		return(len);
 	}
-	if (spec->type == 'X' && spec->octo && spec->zero)
-		s[1] = 'X';
-	if (spec->type == 'x' && spec->octo && spec->zero)
-		s[1] = 'x';
 	ft_putstr(s);
 	if (ft_strlen(s))
 		free(s);
@@ -335,8 +294,6 @@ int	print_string(t_spec *spec, char *s)
 		len = spec->prec;
 	else
 		len = (int)ft_strlen(s);
-	//ft_putnbr(len);
-	//ft_putchar('\n');
 	if (spec->widt > len)
 	{
 		str = ft_strnew(spec->widt);
@@ -371,13 +328,8 @@ int	print_point(t_spec *spec, void *p)
 	int i = 0;
 	int k;
 
-	//if (spec->octo && (spec->type == 'X' || spec->type == 'x') && !num)
-	//	return (0);
-	//if (spec->octo && (spec->type == 'o') && !num && !spec->prec)
-	//	return (0);
 	s = print_pointer((unsigned long long int)p, spec);
 	len = (int)ft_strlen(s);
-	//printf("%d\n", len);
 	if (spec->widt > (int)ft_strlen(s))
 	{
 		k = len - 1;
@@ -394,10 +346,6 @@ int	print_point(t_spec *spec, void *p)
 			i = k;
 		else
 			i--;
-//		if (spec->type == 'X' && spec->octo && spec->zero)
-//			str[1] = 'X';
-//		if (spec->type == 'x' && spec->octo && spec->zero)
-//			str[1] = 'x';
 		while (k >= 0)
 		{
 			str[i] = s[k];
@@ -410,10 +358,39 @@ int	print_point(t_spec *spec, void *p)
 		free(str);
 		return(len);
 	}
-	//if (spec->type == 'X' && spec->octo && spec->zero)
-	//	s[1] = 'X';
 	ft_putstr(s);
 	if (ft_strlen(s))
 		free(s);
 	return (len);
+}
+
+int	print_proc(t_spec *spec, char c)
+{
+	char *s;
+	int i;
+	int len;
+
+	if (spec->widt > 1)
+	{
+		i = 0;
+		len = spec->widt;
+		s = ft_strnew(len);
+		while (i < len)
+		{
+			if (spec->zero && !spec->minu)
+				s[i] = '0';
+			else
+				s[i] = ' ';
+			i++;
+		}
+		if (spec->minu)
+			s[0] = '%';
+		else
+			s[len - 1] = '%';
+		ft_putstr(s);
+		free(s);
+		return (len);
+	}
+	ft_putchar(c);
+	return (1);
 }

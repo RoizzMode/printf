@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 16:43:36 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/03 13:52:56 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/03 18:49:21 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,13 @@ typedef struct s_float
 	double after_p;
 }				t_float;
 
+typedef struct s_dfloat
+{
+	int64_t before_p;
+	long double after_p;
+}				t_dfloat;
+
+
 int	ft_printf(const char *format, ...);
 void	initialize(t_spec *spec);
 int	parse_spec(t_spec *spec, char *s);
@@ -55,5 +62,19 @@ int	num_len(int64_t num);
 char *itoa_after_p(double num);
 double round_p(double num, int prec);
 int64_t		ft_pow2(int n, int64_t p);
-//static int	ft_len(int64_t n);
 char		*ft_itoa2(int64_t n, t_spec* spec);
+int read_base(double num);
+int read_mantiss(double num);
+int read_sign(double num);
+int print_zero(double num, t_spec *spec);
+int		print_inf(t_spec *spec, double num);
+int	nan_inf_0(double num, t_spec *spec);
+int	nan_inf_0_long(long double num, t_spec *spec);
+int		print_inf_long(t_spec *spec, long double num);
+int print_zero_long(long double num, t_spec *spec);
+int read_sign_long(long double num);
+int read_mantiss_long(long double num);
+int read_base_long(long double num);
+char *itoa_after_p_long(long double num);
+long double round_p_long(long double num, int prec);
+int	print_proc(t_spec *spec, char c);
