@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/03 15:55:57 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/03 19:34:26 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/04 14:40:42 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,14 +221,14 @@ int		print_inf_long(t_spec *spec, long double num)
 	char *str;
 
 	len = 3;
-	if (spec->plu || spec->spac)
+	if (spec->plu || spec->spac || read_sign_long(num) == 1)
 		len++;
 	s = ft_strnew(len);
 	i = 0;
 	s[len - 1 - i++] = 'f';
 	s[len - 1 - i++] = 'n';
 	s[len - 1 - i++] = 'i';
-	if ((spec->plu || spec->spac) && read_sign(num) == 1)
+	if (spec->plu || spec->spac || read_sign(num) == 1)
 		s[0] = '-';
 	if (spec->plu && read_sign(num) == 0)
 		s[0] = '+';
@@ -337,15 +337,21 @@ int print_long_double(t_spec *spec, long double num)
 	else
 	{
 		num = round_p_long(num, spec->prec);
+//		printf("%.20Lf", num);
 		tf = (t_dfloat*)malloc(sizeof(t_dfloat));
 		tf->before_p = (int64_t)num;
 		tf->after_p = num - tf->before_p;
+		tf->after_p = round_p_long(tf->after_p, spec->prec);
 		s = ft_itoa2(tf->before_p, spec);
+//		ft_putstr(s);
+//		printf("%lld", tf->before_p);
+//		printf("%Lf", tf->after_p);
 		if (spec->prec != 0)
 		{
 			str = ft_strdup(s);
-			tf->after_p = (int64_t)(tf->after_p * (ft_pow2(10, spec->prec)));
-			temp = itoa_after_p_long(tf->after_p);
+//			tf->after_p = (int64_t)(tf->after_p * (ft_pow2(10, spec->prec)));
+			temp = itoa_after_p_long(tf->after_p, spec->prec);
+//			ft_putstr(temp);
 			free(s);
 			s = ft_strjoin(str, temp);
 			free(str);

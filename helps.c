@@ -6,30 +6,65 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/01 14:32:35 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/03 19:14:48 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/04 14:09:54 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-char *itoa_after_p(double num)
+char *itoa_after_p(double num, int prec)
 {
 	char *s;
 	int i;
+	int k;
 	int64_t unnum;
+	int zeros;
 
+
+	zeros = 0;
+//	num = (int64_t)(num * (ft_pow2(10, prec)));
+	i = 0;
+	while (i < prec)
+	{
+		num = num * 10;
+		if ((num > 0 && num < 1) || (num < 0 && num > -1))
+			zeros++;
+		i++;
+	}
 	unnum = (int64_t)num;
 	if (unnum < 0)
 		unnum *= -1;
-	i = num_len(unnum);
-	s = (char*)malloc(sizeof(char) * i + 2);
-	if (!s)
-		return (NULL);
-	s[i + 1] = '\0';
+	i = num_len(unnum) + zeros;
+//	ft_putchar(i + '0');
+	if (i >= prec)
+	{
+		s = (char*)malloc(sizeof(char) * i + 2);
+		if (!s)
+			return (NULL);
+		s[i + 1] = '\0';
+		k = 0;
+		while (k < i + 1)
+		{
+			s[k++] = '0';
+		}
+	}
+	else
+	{
+		k = 0;
+		s = (char*)malloc(sizeof(char) * prec + 1);
+		if (!s)
+			return (NULL);
+		s[prec] = '\0';
+		while (k < prec + 1)
+		{
+			s[k++] = '0';
+		}
+	}
 	s[i--] = (unnum % 10) + '0';
 	while (unnum /= 10)
 		s[i--] = (unnum % 10 + '0');
 	s[0] = '.';
+	//ft_putstr(s);
 	return (s);
 }
 
@@ -39,6 +74,7 @@ double round_p(double num, int prec)
 	ld = ((int64_t)(num * ft_pow2(10, prec) +
 				(num >= 0 ? 0.5 : -0.5))) / (double)ft_pow2(10, prec);
 	num = ld;
+//	printf("%f", num);
 	return (num);
 }
 

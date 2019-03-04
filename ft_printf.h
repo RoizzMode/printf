@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 16:43:36 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/03 18:49:21 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/04 13:38:50 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	ft_printf(const char *format, ...);
 void	initialize(t_spec *spec);
 int	parse_spec(t_spec *spec, char *s);
 int	print_signed_numb(t_spec *spec, long long int num);
-int	print_unsigned_numb(t_spec *spec, unsigned long long int num);
+int	print_un_numb(t_spec *spec, unsigned long long int num);
 int	print_char(t_spec *spec, char c);
 int	print_string(t_spec *spec, char *s);
 int	print_point(t_spec *spec, void *p);
@@ -59,7 +59,7 @@ char *unsigned_itoa(unsigned long long int num, t_spec *spec);
 char *signed_itoa(long long int num, t_spec *spec);
 char *print_pointer(unsigned long long int num, t_spec *spec);
 int	num_len(int64_t num);
-char *itoa_after_p(double num);
+char *itoa_after_p(double num, int prec);
 double round_p(double num, int prec);
 int64_t		ft_pow2(int n, int64_t p);
 char		*ft_itoa2(int64_t n, t_spec* spec);
@@ -75,6 +75,6 @@ int print_zero_long(long double num, t_spec *spec);
 int read_sign_long(long double num);
 int read_mantiss_long(long double num);
 int read_base_long(long double num);
-char *itoa_after_p_long(long double num);
+char *itoa_after_p_long(long double num, int prec);
 long double round_p_long(long double num, int prec);
 int	print_proc(t_spec *spec, char c);

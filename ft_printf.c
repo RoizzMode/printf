@@ -6,105 +6,12 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 13:58:28 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/03 19:39:14 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/04 18:55:33 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-
-int	num_len(int64_t num)
-{
-	int i;
-
-	i = 1;
-	while (num / 10 > 0)
-	{
-		i++;
-		num /= 10;
-	}
-	return (i);
-}
-
-int	parse_spec(t_spec *spec, char *s)
-{
-	int i;
-
-	i = 0;
-	while (spec->type == 0 && s[i] != '\0')
-	{
-		if (s[i] == '-' && !(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
-			spec->minu = 1;
-		else if(s[i] == '+' && !(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
-			spec->plu = 1;
-		else if (s[i] == ' ' && !(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
-			spec->spac = 1;
-		else if (s[i] == '#' && !(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
-			spec->octo = 1;
-		else if (s[i] == '0' && !(spec->widt) && (spec->prec < 0) && !(spec->size) && !(spec->type))
-			spec->zero = 1;
-		else if (s[i] >= '1' && s[i] <= '9' && !(spec->widt) && (spec->prec < 0)
-				&& !(spec->size) && !(spec->type))
-		{
-			spec->widt = ft_atoi(s + i);
-			i =i + num_len(spec->widt) - 1;
-		}
-		else if (s[i] == '.')
-		{
-			if (s[i + 1] >= '0' && s[i + 1] <= '9')
-			{
-				spec->prec = ft_atoi(s + i + 1);
-				i += num_len(spec->prec);
-			}
-			else
-				spec->prec = 0;
-		}
-		else if (s[i] == 'l' && s[i + 1] == 'l' && !(spec->size) && !(spec->type))
-		{
-			spec->size = 'b';
-			i += 2;
-			continue;
-		}
-		else if (s[i] == 'h' && s[i + 1] == 'h' && !(spec->size) && !(spec->type))
-		{
-			spec->size = 's';
-			i += 2;
-			continue;
-		}
-		else if ((s[i] == 'h' || s[i] == 'l' || s[i] == 'L') && !(spec->size) && !(spec->type))
-			spec->size = s[i];
-		else if (s[i] >= 0 && s[i] <= 127 && i > 0)
-		{
-			spec->type = s[i];
-		}
-		i++;
-	}
-	if (!spec->type)
-		return (0);
-	return (i);
-}
-
-void	print_spec(t_spec *spec)
-{
-	printf("\n");
-	if (spec->minu)
-		printf("Minus: %d\n", spec->minu);
-	if (spec->plu)
-		printf("Plus: %d\n", spec->plu);
-	if (spec->spac)
-		printf("Space: %d\n", spec->spac);
-	if (spec->octo)
-		printf("Octopus: %d\n", spec->octo);
-	if (spec->zero)
-		printf("Zero: %d\n", spec->zero);
-	if (spec->widt)
-		printf("Width: %d\n", spec->widt);
-	if (spec->prec > -1)
-		printf("Precision: %d\n", spec->prec);
-	if (spec->type)
-		printf("Type: %c\n", spec->type);
-	if (spec->size)
-		printf("Size: %c\n", spec->size);
-}
+#include <math.h>
 
 void	initialize(t_spec *spec)
 {
@@ -119,72 +26,87 @@ void	initialize(t_spec *spec)
 	spec->type = 0;
 }
 
-int	ft_printf(const char *format, ...)
+int		help_cycle(t_spec *spec, va_list ap)
 {
-	int i;
-	t_spec *spec;
-	va_list ap;
 	int k;
+
+	k = 0;
+	if (spec->type == 'd' || spec->type == 'i')
+		k += print_signed_numb(spec, va_arg(ap, long long int));
+	else if (spec->type == 'o' || spec->type == 'u' ||
+			spec->type == 'x' || spec->type == 'X')
+		k += print_un_numb(spec, va_arg(ap, unsigned long long int));
+	else if (spec->type == 'c')
+		k += print_char(spec, va_arg(ap, int));
+	else if (spec->type == 's')
+		k += print_string(spec, va_arg(ap, char*));
+	else if (spec->type == 'p')
+		k += print_point(spec, va_arg(ap, void*));
+	else if (spec->type == 'f' && spec->size == 'L')
+		k += print_long_double(spec, va_arg(ap, long double));
+	else if (spec->type == 'f')
+		k += print_double(spec, va_arg(ap, double));
+	else if (spec->type == '%')
+		k += print_proc(spec, spec->type);
+	else
+		k += print_char(spec, spec->type);
+	return (k);
+}
+
+int		cycle(t_spec *spec, const char *s, va_list ap)
+{
+	int k;
+	int i;
 	int parsed;
 
-	va_start(ap, format);
 	i = 0;
 	k = 0;
-	spec = (t_spec *)malloc(sizeof(t_spec));
-	initialize(spec);
-	while (format[i] != '\0')
+	while (s[i] != '\0')
 	{
-		if (format[i] == '%' && (parsed = parse_spec(spec, (char *)(format + i))))
+		if (s[i] == '%' && (parsed = parse_spec(spec, (char *)(s + i))))
 		{
 			i += parsed;
-			//print_spec(spec);
-			if (spec->type == 'd' || spec->type == 'i')
-				k += print_signed_numb(spec, va_arg(ap, long long int));
-			else if (spec->type == 'o' || spec->type == 'u' ||
-					spec->type == 'x' || spec->type == 'X')
-				k += print_unsigned_numb(spec, va_arg(ap, unsigned long long int));
-			else if (spec->type == 'c')
-				k += print_char(spec, va_arg(ap, int));
-			else if (spec->type == 's')
-			{
-				k += print_string(spec, va_arg(ap, char*));
-			}
-			else if (spec->type == 'p')
-				k += print_point(spec, va_arg(ap, void*));
-			else if (spec->type == 'f' && spec->size == 'L')
-				k += print_long_double(spec, va_arg(ap, long double));
-			else if (spec->type == 'f')
-				k += print_double(spec, va_arg(ap, double));
-			else if (spec->type == '%')
-				k += print_proc(spec, spec->type);
-			else
-				k += print_char(spec, spec->type);
+			k += help_cycle(spec, ap);
 			initialize(spec);
 		}
 		else
 		{
-			ft_putchar(format[i++]);
+			ft_putchar(s[i++]);
 			k++;
 		}
 	}
+	return (k);
+}
+
+int		ft_printf(const char *format, ...)
+{
+	t_spec	*spec;
+	va_list	ap;
+	int		k;
+
+	va_start(ap, format);
+	k = 0;
+	spec = (t_spec *)malloc(sizeof(t_spec));
+	initialize(spec);
+	k = cycle(spec, format, ap);
 	free(spec);
 	va_end(ap);
 	return (k);
 }
 
-/*int main()
+int		main()
 {
-//	int d = -64564;
+	int long long d = 64564;
+	short int s = 128;
+	long int l = 134454;
+	char c = 22;
 //	unsigned int u = 31243;
 //	char *s = "qwerty";
 //	char c = 'c';
 //	int *p = &d;
-	double f = 0.883124;
-	long double lf = -312.3125;
+	long double f = -1.0002;
 
-	printf("%d ", printf("%20f\n", f));
-	printf("%d ", ft_printf("%20f\n", f));
-	printf("%d ", printf("%20Lf\n", lf));
-	printf("%d ", ft_printf("%20Lf\n", lf));
+	printf("%d ", printf("%+15.20hd %+020.15lld %+0.ld %+010hhd %.Lf\n", s, d, l, c, f));
+	printf("%d ", ft_printf("%+15.20hd %+020.15lld %+0.ld %+010hhd %.Lf\n", s, d, l, c, f));
 	return (0);
-}*/
+}

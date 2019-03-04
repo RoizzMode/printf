@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/07 14:25:23 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/03 18:50:27 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/04 18:53:06 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,8 @@ int	print_signed_numb(t_spec *spec, long long int num)
 	i = 0;
 	s = signed_itoa(num, spec);
 	len = (int)ft_strlen(s);
+	//ft_putstr(s);
+	//printf("|%s|", s);
 	if (spec->widt >= (int)ft_strlen(s))
 	{
 		k = len - 1;
@@ -136,7 +138,7 @@ int	print_signed_numb(t_spec *spec, long long int num)
 		}
 		if (!check_negative(num, spec) && (spec->minu || spec->zero))
 		{
-			if (spec->prec > 0 && spec->prec > (int)ft_strlen(s))
+			if (spec->prec > 0)
 				str[len - spec->prec - 1] = '-';
 			else if (spec->minu || spec->zero)
 				str[0] = '-';
@@ -145,17 +147,19 @@ int	print_signed_numb(t_spec *spec, long long int num)
 		}
 		if (check_negative(num, spec) && spec->plu && (spec->minu || spec->zero))
 		{
-			str[0] = '+';
-			//if (spec->prec > 0 && spec->prec > (int)ft_strlen(s))
-			//	str[len - spec->prec - 1] = '+';
-			//else if (spec->minu || spec->zero)
-			//	str[0] = '+';
-			//else
-			//	str[len - spec->widt + 1] = '+';
+			//str[0] = '+';
+			//printf("%d %d %d\n", spec->prec, len, (int)ft_strlen(s));
+			if (spec->prec > 0)
+				str[len - spec->prec - 1] = '+';
+			else if (spec->minu || spec->zero)
+				str[0] = '+';
+				//printf("here");
+			else
+				str[len - spec->widt + 1] = '+';
 		}
 		if (check_negative(num, spec) && spec->spac && (spec->minu || spec->zero))
 		{
-			if (spec->prec > 0 && spec->prec > (int)ft_strlen(s))
+			if (spec->prec > 0)
 				str[len - spec->prec - 1] = ' ';
 			else if (spec->minu || spec->zero)
 				str[0] = ' ';
@@ -175,7 +179,7 @@ int	print_signed_numb(t_spec *spec, long long int num)
 	return (len);
 }
 
-int	print_unsigned_numb(t_spec *spec, unsigned long long int num)
+int	print_un_numb(t_spec *spec, unsigned long long int num)
 {
 	char *s;
 	char *str;
