@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 16:43:36 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/04 13:38:50 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/05 19:53:53 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ double round_p(double num, int prec);
 int64_t		ft_pow2(int n, int64_t p);
 char		*ft_itoa2(int64_t n, t_spec* spec);
 int read_base(double num);
-int read_mantiss(double num);
+int read_mantiss(double num, int i);
 int read_sign(double num);
 int print_zero(double num, t_spec *spec);
 int		print_inf(t_spec *spec, double num);

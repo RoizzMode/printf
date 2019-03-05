@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/03 15:55:57 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/04 14:40:42 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/05 19:10:47 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,30 +47,22 @@ int read_base_long(long double num)
 	null = 0;
 	i = 6;
 	while (i > -1)
-	{
-		if (casted[9] & (1 << i))
+		if (casted[9] & (1 << i--))
 			one = 1;
 		else
 			null = 1;
-		i--;
-	}
 	i = 7;
 	while (i > -1)
-	{
-		if (casted[8] & (1 << i))
+		if (casted[8] & (1 << i--))
 			one = 1;
 		else
 			null = 1;
-		i--;
-	}
 	if (casted[7] & (1 << 7))
 		one = 1;
 	else
 		null = 1;
-	if (one && !null)
-		return (1);
-	if (!one && null)
-		return (0);
+	if ((one && !null) || (!one && null))
+		return ((one && !null) ? (1) : (0));
 	return (-1);
 }
 

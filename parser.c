@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/04 12:54:46 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/04 19:16:30 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/04 19:22:28 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ int		parse_spec(t_spec *spec, char *s)
 		i = parse_cycle(spec, s, i);
 		i++;
 	}
-	print_spec(spec);
+	//print_spec(spec);
 	if (!spec->type)
 		return (0);
 	return (i);

@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 13:58:28 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/04 18:55:33 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/05 19:54:27 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,17 +96,21 @@ int		ft_printf(const char *format, ...)
 
 int		main()
 {
-	int long long d = 64564;
-	short int s = 128;
-	long int l = 134454;
-	char c = 22;
+//	int long long d = 64564;
+//	short int s = 128;
+//	long int l = 134454;
+//	char c = 22;
 //	unsigned int u = 31243;
 //	char *s = "qwerty";
-//	char c = 'c';
+//	char c = 0;
+//	char *s = "qwerty";
+//	int d = 122;
 //	int *p = &d;
-	long double f = -1.0002;
+	long double f = -0.0000000;
 
-	printf("%d ", printf("%+15.20hd %+020.15lld %+0.ld %+010hhd %.Lf\n", s, d, l, c, f));
-	printf("%d ", ft_printf("%+15.20hd %+020.15lld %+0.ld %+010hhd %.Lf\n", s, d, l, c, f));
+//	printf("%d ", printf("%+15.20hd %+020.15lld %+0.ld %+010hhd %.Lf\n", s, d, l, c, f));
+//	printf("%d ", ft_printf("%+15.20hd %+020.15lld %+0.ld %+010hhd %.Lf\n", s, d, l, c, f));
+	printf("%d", printf("%+030.4Lf\n", f));
+	printf("%d", ft_printf("%+030.4Lf\n", f));
 	return (0);
 }
