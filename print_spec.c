@@ -6,15 +6,16 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/07 14:25:23 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/05 20:32:54 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/05 20:49:25 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int check_negative(long long int num, t_spec *spec)
+int			check_negative(long long int num, t_spec *spec)
 {
 	long long int unnum;
+
 	if (spec->size == 'l')
 		unnum = (long int)num;
 	else if (spec->size == 's')
@@ -30,7 +31,7 @@ int check_negative(long long int num, t_spec *spec)
 	return (1);
 }
 
-long long help_cast(long long num, t_spec *spec)
+long long	help_cast(long long num, t_spec *spec)
 {
 	long long unnum;
 
@@ -47,7 +48,7 @@ long long help_cast(long long num, t_spec *spec)
 	return (unnum);
 }
 
-void	change_spec(t_spec *spec)
+void		change_spec(t_spec *spec)
 {
 	if (spec->plu && spec->spac)
 		spec->spac = 0;
@@ -55,7 +56,7 @@ void	change_spec(t_spec *spec)
 		spec->zero = 0;
 }
 
-int		num_len_signed(long long unnum)
+int			num_len_signed(long long unnum)
 {
 	int len;
 
@@ -68,7 +69,7 @@ int		num_len_signed(long long unnum)
 	return (len);
 }
 
-int		help_check(long long unnum)
+int			help_check(long long unnum)
 {
 	int check;
 
@@ -78,9 +79,9 @@ int		help_check(long long unnum)
 	return (check);
 }
 
-char *help_itoa(char *oct, t_spec *spec, int i, int check)
+char		*help_itoa(char *oct, t_spec *spec, int i, int check)
 {
-	if (check < 0  && !((spec->minu || spec->zero) && spec->widt > i))
+	if (check < 0 && !((spec->minu || spec->zero) && spec->widt > i))
 		oct[0] = '-';
 	if (check > 0 && spec->plu && !((spec->minu || spec->zero)
 				&& spec->widt > i))
@@ -91,7 +92,7 @@ char *help_itoa(char *oct, t_spec *spec, int i, int check)
 	return (oct);
 }
 
-int		help_len(int len, t_spec *spec, long long unnum)
+int			help_len(int len, t_spec *spec, long long unnum)
 {
 	if (len < spec->prec)
 		len = spec->prec - 1;
@@ -100,17 +101,17 @@ int		help_len(int len, t_spec *spec, long long unnum)
 	return (len);
 }
 
-char *signed_itoa(long long int num, t_spec *spec)
+char		*signed_itoa(long long int num, t_spec *spec)
 {
-	char  *oct;
-	int len;
-	int check;
-	long long int unnum;
-	int i;
+	char			*oct;
+	int				len;
+	int				check;
+	long long int	unnum;
+	int				i;
 
 	i = 0;
 	if (!spec->prec && !num && !spec->octo)
-		return("");
+		return ("");
 	change_spec(spec);
 	unnum = help_cast(num, spec);
 	len = num_len_signed(unnum);
@@ -129,70 +130,76 @@ char *signed_itoa(long long int num, t_spec *spec)
 	return (oct);
 }
 
-int	print_signed_numb(t_spec *spec, long long int num)
+char		*get_str_char(t_spec *spec, char *str, int len, char c)
 {
-	char *s;
-	char *str;
-	int len;
-	int i;
-	int k;
+	if (spec->prec > 0)
+		str[len - spec->prec - 1] = c;
+	else if (spec->minu || spec->zero)
+		str[0] = c;
+	else
+		str[len - spec->widt + 1] = c;
+	return (str);
+}
+
+char		*get_str_signed(t_spec *spec, char *str, long long num, int len)
+{
+	if (!check_negative(num, spec) && (spec->minu || spec->zero))
+		str = get_str_char(spec, str, len, '-');
+	if (check_negative(num, spec) && spec->plu &&
+			(spec->minu || spec->zero))
+		str = get_str_char(spec, str, len, '+');
+	if (check_negative(num, spec) && spec->spac &&
+			(spec->minu || spec->zero))
+		str = get_str_char(spec, str, len, ' ');
+	return (str);
+}
+
+int			get_i_signed(int i, int k, int minu)
+{
+	if (minu)
+		i = k;
+	else
+		i--;
+	return (i);
+}
+
+int			help_signed(t_spec *spec, char *s, int len, long long num)
+{
+	int		i;
+	int		k;
+	char	*str;
 
 	i = 0;
+	k = len - 1;
+	len = spec->widt;
+	str = ft_strnew(len);
+	while (i < len)
+		if (spec->zero && spec->prec < 0)
+			str[i++] = '0';
+		else
+			str[i++] = ' ';
+	i = get_i_signed(i, k, spec->minu);
+	while (k >= 0)
+	{
+		str[i] = s[k--];
+		i--;
+	}
+	str = get_str_signed(spec, str, num, len);
+	ft_putstr(str);
+	free(s);
+	free(str);
+	return (len);
+}
+
+int			print_signed_numb(t_spec *spec, long long int num)
+{
+	char	*s;
+	int		len;
+
 	s = signed_itoa(num, spec);
 	len = (int)ft_strlen(s);
 	if (spec->widt >= (int)ft_strlen(s))
-	{
-		k = len - 1;
-		len = spec->widt;
-		str = ft_strnew(len);
-		while (i < len)
-			if (spec->zero && spec->prec < 0)
-				str[i++] = '0';
-			else
-				str[i++] = ' ';
-		if (spec->minu)
-			i = k;
-		else
-			i--;
-		while (k >= 0)
-		{
-			str[i] = s[k--];
-			i--;
-		}
-		if (!check_negative(num, spec) && (spec->minu || spec->zero))
-		{
-			if (spec->prec > 0)
-				str[len - spec->prec - 1] = '-';
-			else if (spec->minu || spec->zero)
-				str[0] = '-';
-			else
-				str[len - spec->widt + 1] = '-';
-		}
-		if (check_negative(num, spec) && spec->plu &&
-				(spec->minu || spec->zero))
-		{
-			if (spec->prec > 0)
-				str[len - spec->prec - 1] = '+';
-			else if (spec->minu || spec->zero)
-				str[0] = '+';
-			else
-				str[len - spec->widt + 1] = '+';
-		}
-		if (check_negative(num, spec) && spec->spac &&
-				(spec->minu || spec->zero))
-		{
-			if (spec->prec > 0)
-				str[len - spec->prec - 1] = ' ';
-			else if (spec->minu || spec->zero)
-				str[0] = ' ';
-			else
-				str[len - spec->widt + 1] = ' ';
-		}
-		ft_putstr(str);
-		free(s);
-		free(str);
-		return (len);
-	}
+		return (help_signed(spec, s, len, num));
 	ft_putstr(s);
 	free(s);
 	return (len);
