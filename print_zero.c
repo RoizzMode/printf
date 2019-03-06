@@ -6,20 +6,11 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/05 19:19:21 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/05 19:57:38 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/06 14:32:10 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-
-int		get_i(int i, int k, int minu)
-{
-	if (minu)
-		i = k;
-	else
-		i--;
-	return (i);
-}
 
 char	*get_str_zero(char *str, char *s, t_spec *spec, double num)
 {

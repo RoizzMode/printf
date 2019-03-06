@@ -6,34 +6,11 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/04 12:54:46 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/04 19:22:28 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/06 14:02:05 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-
-void	print_spec(t_spec *spec)
-{
-	printf("\n");
-	if (spec->minu)
-		printf("Minus: %d\n", spec->minu);
-	if (spec->plu)
-		printf("Plus: %d\n", spec->plu);
-	if (spec->spac)
-		printf("Space: %d\n", spec->spac);
-	if (spec->octo)
-		printf("Octopus: %d\n", spec->octo);
-	if (spec->zero)
-		printf("Zero: %d\n", spec->zero);
-	if (spec->widt)
-		printf("Width: %d\n", spec->widt);
-	if (spec->prec > -1)
-		printf("Precision: %d\n", spec->prec);
-	if (spec->type)
-		printf("Type: %c\n", spec->type);
-	if (spec->size)
-		printf("Size: %c\n", spec->size);
-}
 
 int		num_len(int64_t num)
 {
@@ -133,7 +110,6 @@ int		parse_spec(t_spec *spec, char *s)
 		i = parse_cycle(spec, s, i);
 		i++;
 	}
-	//print_spec(spec);
 	if (!spec->type)
 		return (0);
 	return (i);

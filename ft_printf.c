@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 13:58:28 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/06 13:12:36 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/06 14:13:00 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,25 +92,4 @@ int		ft_printf(const char *format, ...)
 	free(spec);
 	va_end(ap);
 	return (k);
-}
-
-int		main()
-{
-//	long int d = 64564;
-//	short int s = 128;
-//	long int l = 134454;
-//	char c = 22;
-//	unsigned int u = 31243;
-//	char *s = "qwerty";
-//	char c = 0;
-//	char *s = "qwerty";
-//	int d = 122;
-//	int *p = &d;
-	long double f = NAN;
-
-//	printf("%d ", printf("%+15.20hd %+020.15lld %+0.ld %+010hhd %.Lf\n", s, d, l, c, f));
-//	printf("%d ", ft_printf("%+15.20hd %+020.15lld %+0.ld %+010hhd %.Lf\n", s, d, l, c, f));
-	printf("%d", printf("%.7Lf\n", f));
-	printf("%d", ft_printf("%.7Lf\n", f));
-	return (0);
 }
