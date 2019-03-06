@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/04 20:04:59 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/05 20:10:49 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/06 12:51:36 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char	*take_num(unsigned long long int num, t_spec *spec)
 	else if (spec->type == 'x')
 		s = dec_to_hex(num, spec);
 	else
-		s = dec_to_heX(num, spec);
+		s = dec_to_hexx(num, spec);
 	return (s);
 }
 

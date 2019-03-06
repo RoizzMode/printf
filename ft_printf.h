@@ -6,7 +6,7 @@
 /*   By: lschambe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/07 16:43:36 by lschambe          #+#    #+#             */
-/*   Updated: 2019/03/05 19:53:53 by lschambe         ###   ########.fr       */
+/*   Updated: 2019/03/06 13:03:35 by lschambe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int print_double(t_spec *spec, double num);
 int print_long_double(t_spec *spec, long double num);
 char *dec_to_oct(unsigned long long int num, t_spec *spec);
 char *dec_to_hex(unsigned long long int num, t_spec *spec);
-char *dec_to_heX(unsigned long long int num, t_spec *spec);
+char *dec_to_hexx(unsigned long long int num, t_spec *spec);
 char *unsigned_itoa(unsigned long long int num, t_spec *spec);
 char *signed_itoa(long long int num, t_spec *spec);
 char *print_pointer(unsigned long long int num, t_spec *spec);
@@ -73,8 +73,8 @@ int	nan_inf_0_long(long double num, t_spec *spec);
 int		print_inf_long(t_spec *spec, long double num);
 int print_zero_long(long double num, t_spec *spec);
 int read_sign_long(long double num);
-int read_mantiss_long(long double num);
-int read_base_long(long double num);
+int read_mantiss_long(long double num, int i, int one, int null);
+int read_base_long(long double num, int i);
 char *itoa_after_p_long(long double num, int prec);
 long double round_p_long(long double num, int prec);
 int	print_proc(t_spec *spec, char c);
